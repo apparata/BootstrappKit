@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Bootstrapp",
+    name: "BootstrappKit",
     platforms: [
         .macOS(.v10_15)
     ],
