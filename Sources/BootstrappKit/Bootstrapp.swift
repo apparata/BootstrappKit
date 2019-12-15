@@ -30,8 +30,8 @@ public class Bootstrapp {
         let contentPath = template.contentPath
         let contentSubpaths = try contentPath.recursiveContentsOfDirectory(fullPaths: false)
         
-        buildDirectoryBlacklist(includeDirectories: specification.includeDirectories, with: context)
-        buildFileBlacklist(includeFiles: specification.includeFiles, with: context)
+        try buildDirectoryBlacklist(includeDirectories: specification.includeDirectories, with: context)
+        try buildFileBlacklist(includeFiles: specification.includeFiles, with: context)
 
         try instantiateDirectories(atSubpaths: contentSubpaths,
                                    of: contentPath,
@@ -120,20 +120,16 @@ public class Bootstrapp {
     // MARK: - Directory Blacklisting
     
     private func buildDirectoryBlacklist(includeDirectories: [BootstrappSpecification.IncludeDirectories],
-                                         with context: Context) {
+                                         with context: Context) throws {
         var blacklistedDirectories: [Path] = []
         for entry in includeDirectories {
+            
+            let conditionTokens = try ConditionLexer().tokenize(entry.condition)
+            let condition = try ConditionParser().parse(conditionTokens)
+            
             // Don't add entry to blacklist if inclusion condition is true.
-            if let value = context[entry.condition] {
-                if let boolValue = value as? Bool {
-                    if boolValue {
-                        continue
-                    }
-                } else if let stringValue = value as? String {
-                    if stringValue != "" {
-                        continue
-                    }
-                }
+            if condition.evaluate(with: context) {
+                continue
             }
             
             let paths: [Path] = entry.directories.map { Path($0) }
@@ -144,6 +140,7 @@ public class Bootstrapp {
     
     private func shouldIncludeDirectory(at path: Path) -> Bool {
         for blacklistedDirectory in blacklistedDirectories {
+            // TODO: Using hasPrefix is not entirely correct. Improve it.
             if path.internalPath.hasPrefix(blacklistedDirectory.internalPath) {
                 return false
             }
@@ -154,20 +151,16 @@ public class Bootstrapp {
     // MARK: - File Blacklisting
     
     private func buildFileBlacklist(includeFiles: [BootstrappSpecification.IncludeFiles],
-                                   with context: Context) {
+                                   with context: Context) throws {
         var blacklistedFiles: [Path] = []
         for entry in includeFiles {
+            
+            let conditionTokens = try ConditionLexer().tokenize(entry.condition)
+            let condition = try ConditionParser().parse(conditionTokens)
+            
             // Don't add entry to blacklist if inclusion condition is true.
-            if let value = context[entry.condition] {
-                if let boolValue = value as? Bool {
-                    if boolValue {
-                        continue
-                    }
-                } else if let stringValue = value as? String {
-                    if stringValue != "" {
-                        continue
-                    }
-                }
+            if condition.evaluate(with: context) {
+                continue
             }
             
             let paths: [Path] = entry.files.map { Path($0) }
