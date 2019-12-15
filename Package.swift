@@ -13,7 +13,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/yonaskolb/XcodeGen.git", .upToNextMajor(from: "2.10.0")),
         .package(url: "https://github.com/apparata/Markin.git", .upToNextMajor(from: "0.6.0")),
-        .package(url: "https://github.com/apparata/TemplateKit.git", .upToNextMajor(from: "0.3.3"))
+        .package(url: "https://github.com/apparata/TemplateKit.git", .upToNextMajor(from: "0.4.8"))
     ],
     targets: [
         .target(

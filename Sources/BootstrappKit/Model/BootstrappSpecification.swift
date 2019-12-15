@@ -76,6 +76,14 @@ import Foundation
                  "<{EXECUTABLE_NAME}>"
              ]
          }
+     ],
+     "includeFiles": [
+         {
+             "if": "LICENSE_TYPE == 'UNLICENSED'",
+             "files": [
+                 "UNLICENSED"
+             ]
+         }
      ]
  }
 
@@ -160,7 +168,12 @@ public struct BootstrappSpecification {
         public let condition: String
         public let directories: [String]
     }
-        
+
+    public struct IncludeFiles {
+        public let condition: String
+        public let files: [String]
+    }
+    
     public let id: String
     public let specificationVersion: VersionNumber
     public let templateVersion: VersionNumber
@@ -171,6 +184,7 @@ public struct BootstrappSpecification {
     public let parameters: [BootstrappParameter]
     public let parametrizableFiles: [Regex]
     public let includeDirectories: [IncludeDirectories]
+    public let includeFiles: [IncludeFiles]
 }
 
 extension BootstrappSpecification.ProjectType: Hashable {
@@ -219,6 +233,7 @@ extension BootstrappSpecification: Codable {
         case parameters
         case parametrizableFiles
         case includeDirectories
+        case includeFiles
     }
     
     public init(from decoder: Decoder) throws {
@@ -254,6 +269,7 @@ extension BootstrappSpecification: Codable {
         let patterns = try container.decodeIfPresent([String].self, forKey: .parametrizableFiles) ?? []
         parametrizableFiles = patterns.map { Regex("^\($0)$") }
         includeDirectories = try container.decodeIfPresent([IncludeDirectories].self, forKey: .includeDirectories) ?? []
+        includeFiles = try container.decodeIfPresent([IncludeFiles].self, forKey: .includeFiles) ?? []
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -282,6 +298,8 @@ extension BootstrappSpecification: Codable {
             String($0.pattern.dropFirst().dropLast())
         }
         try container.encode(patterns, forKey: .parametrizableFiles)
+        try container.encode(includeDirectories, forKey: .includeDirectories)
+        try container.encode(includeFiles, forKey: .includeFiles)
     }
 }
 
@@ -302,5 +320,25 @@ extension BootstrappSpecification.IncludeDirectories: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(condition, forKey: .condition)
         try container.encode(directories, forKey: .directories)
+    }
+}
+
+extension BootstrappSpecification.IncludeFiles: Codable {
+    
+    enum CodingKeys: String, CodingKey {
+        case condition = "if"
+        case files
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        condition = try container.decode(String.self, forKey: .condition)
+        files = try container.decode([String].self, forKey: .files)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(condition, forKey: .condition)
+        try container.encode(files, forKey: .files)
     }
 }
