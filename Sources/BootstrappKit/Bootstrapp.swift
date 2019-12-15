@@ -206,6 +206,10 @@ public class Bootstrapp {
         let files = contentSubpaths.filter { !(contentPath + $0).isDirectory }
         for filePath in files {
             
+            guard shouldIncludeDirectory(at: filePath) else {
+                continue
+            }
+            
             guard shouldIncludeFile(at: filePath) else {
                 continue
             }
