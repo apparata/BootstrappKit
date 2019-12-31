@@ -140,8 +140,8 @@ public class Bootstrapp {
     
     private func shouldIncludeDirectory(at path: Path) -> Bool {
         for blacklistedDirectory in blacklistedDirectories {
-            // TODO: Using hasPrefix is not entirely correct. Improve it.
-            if path.internalPath.hasPrefix(blacklistedDirectory.internalPath) {
+            if path.internalPath == blacklistedDirectory.internalPath
+                || path.internalPath.hasPrefix(blacklistedDirectory.internalPath + "/") {
                 return false
             }
         }
@@ -170,6 +170,11 @@ public class Bootstrapp {
     }
     
     private func shouldIncludeFile(at path: Path) -> Bool {
+        
+        if path.lastComponent == ".ignored-placeholder" {
+            return false
+        }
+        
         for blacklistedFile in blacklistedFiles {
             if path.internalPath == blacklistedFile.internalPath {
                 return false
