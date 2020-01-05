@@ -158,11 +158,12 @@ public struct BootstrappSpecification {
     }
     
     public enum ProjectType {
+        case generalMetaTemplate
         case xcodeMetaTemplate
         case swiftMetaTemplate
+        case general
         case xcodeProject(specification: String)
         case swiftPackage
-        case general
     }
     
     public struct IncludeDirectories {
@@ -191,13 +192,14 @@ public struct BootstrappSpecification {
 extension BootstrappSpecification.ProjectType: Hashable {
     public func hash(into hasher: inout Hasher) {
         switch self {
+        case .generalMetaTemplate: hasher.combine("generalMetaTemplate")
         case .xcodeMetaTemplate: hasher.combine("xcodeMetaTemplate")
         case .swiftMetaTemplate: hasher.combine("swiftMetaTemplate")
+        case .general: hasher.combine("general")
         case .xcodeProject(let specification):
             hasher.combine("xcodeProject")
             hasher.combine(specification)
         case .swiftPackage: hasher.combine("swiftPackage")
-        case .general: hasher.combine("general")
         }
     }
 }
@@ -206,11 +208,12 @@ extension BootstrappSpecification.ProjectType: Comparable {
 
     public var category: String {
         switch self {
+        case .generalMetaTemplate: return "Meta Templates"
         case .swiftMetaTemplate: return "Meta Templates"
         case .xcodeMetaTemplate: return "Meta Templates"
+        case .general: return "General"
         case .swiftPackage: return "Swift Packages"
         case .xcodeProject(_): return "Xcode Projects"
-        case .general: return "General"
         }
     }
 
@@ -244,6 +247,8 @@ extension BootstrappSpecification: Codable {
         
         let type = try container.decode(String.self, forKey: .type)
         switch type {
+        case "General":
+            self.type = .general
         case "Swift Package":
             self.type = .swiftPackage
         case "Xcode Project":
@@ -251,6 +256,8 @@ extension BootstrappSpecification: Codable {
                 throw Error.xcodeProjectRequiresProjectSpecification
             }
             self.type = .xcodeProject(specification: projectSpecification)
+        case "General Meta Template":
+            self.type = .generalMetaTemplate
         case "Swift Meta Template":
             self.type = .swiftMetaTemplate
         case "Xcode Meta Template":
@@ -279,17 +286,19 @@ extension BootstrappSpecification: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch type {
-        case .xcodeMetaTemplate:
-            try container.encode("Xcode Meta Template", forKey: .type)
+        case .generalMetaTemplate:
+            try container.encode("General Meta Template", forKey: .type)
         case .swiftMetaTemplate:
             try container.encode("Swift Meta Template", forKey: .type)
+        case .xcodeMetaTemplate:
+            try container.encode("Xcode Meta Template", forKey: .type)
+        case .general:
+            try container.encode("General", forKey: .type)
+        case .swiftPackage:
+            try container.encode("Swift Package", forKey: .type)
         case .xcodeProject(let specification):
             try container.encode("Xcode Project", forKey: .type)
             try container.encode(specification, forKey: .projectSpecification)
-        case .swiftPackage:
-            try container.encode("Swift Package", forKey: .type)
-        case .general:
-            try container.encode("General", forKey: .type)
         }
         
         try container.encode(id, forKey: .id)

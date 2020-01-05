@@ -44,7 +44,8 @@ public class Bootstrapp {
                              with: context)
         
         switch specification.type {
-        case .swiftPackage:
+            
+        case .generalMetaTemplate:
             return outputPath
 
         case .swiftMetaTemplate:
@@ -53,6 +54,12 @@ public class Bootstrapp {
         case .xcodeMetaTemplate:
             return outputPath
             
+        case .general:
+            return outputPath
+            
+        case .swiftPackage:
+            return outputPath
+                                        
         case .xcodeProject(let specificationFilename):
             let projectSpecificationPath = outputPath.appendingComponent(specificationFilename)
             let projectGenerator = XcodeProjectGenerator()
@@ -63,9 +70,6 @@ public class Bootstrapp {
                                                             projectPath: outputPath,
                                                             context: context)
             return projectPath
-            
-        case .general:
-            return outputPath
         }
     }
     
