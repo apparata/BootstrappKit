@@ -162,6 +162,7 @@ public struct BootstrappSpecification {
         case swiftMetaTemplate
         case xcodeProject(specification: String)
         case swiftPackage
+        case general
     }
     
     public struct IncludeDirectories {
@@ -196,6 +197,7 @@ extension BootstrappSpecification.ProjectType: Hashable {
             hasher.combine("xcodeProject")
             hasher.combine(specification)
         case .swiftPackage: hasher.combine("swiftPackage")
+        case .general: hasher.combine("general")
         }
     }
 }
@@ -208,6 +210,7 @@ extension BootstrappSpecification.ProjectType: Comparable {
         case .xcodeMetaTemplate: return "Meta Templates"
         case .swiftPackage: return "Swift Packages"
         case .xcodeProject(_): return "Xcode Projects"
+        case .general: return "General"
         }
     }
 
@@ -276,15 +279,17 @@ extension BootstrappSpecification: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch type {
+        case .xcodeMetaTemplate:
+            try container.encode("Xcode Meta Template", forKey: .type)
+        case .swiftMetaTemplate:
+            try container.encode("Swift Meta Template", forKey: .type)
         case .xcodeProject(let specification):
             try container.encode("Xcode Project", forKey: .type)
             try container.encode(specification, forKey: .projectSpecification)
         case .swiftPackage:
             try container.encode("Swift Package", forKey: .type)
-        case .xcodeMetaTemplate:
-            try container.encode("Xcode Meta Template", forKey: .type)
-        case .swiftMetaTemplate:
-            try container.encode("Swift Meta Template", forKey: .type)
+        case .general:
+            try container.encode("General", forKey: .type)
         }
         
         try container.encode(id, forKey: .id)

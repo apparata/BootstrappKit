@@ -63,9 +63,10 @@ public class Bootstrapp {
                                                             projectPath: outputPath,
                                                             context: context)
             return projectPath
+            
+        case .general:
+            return outputPath
         }
-        
-
     }
     
     // MARK: - Context
