@@ -7,6 +7,7 @@ import XcodeGenKit
 import ProjectSpec
 import XcodeProj
 import PathKit
+import Version
 
 internal class XcodeProjectGenerator {
     
@@ -27,7 +28,7 @@ internal class XcodeProjectGenerator {
         let projectSpecificationPath = PathKit.Path(specificationPath.string)
         let projectOutputPath = PathKit.Path(projectPath.string)
 
-        let xcodeGenVersion = ProjectSpec.Version("2.10.0") // XcodeGen version.
+        let xcodeGenVersion = Version("2.25.0") // XcodeGen version.
         let specificationLoader = SpecLoader(version: xcodeGenVersion)
         
         let project = try specificationLoader.loadProject(path: projectSpecificationPath)

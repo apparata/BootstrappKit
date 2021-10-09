@@ -11,9 +11,9 @@ let package = Package(
         .library(name: "BootstrappKit", targets: ["BootstrappKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/yonaskolb/XcodeGen.git", .upToNextMajor(from: "2.10.0")),
-        .package(url: "https://github.com/apparata/Markin.git", .upToNextMajor(from: "0.6.0")),
-        .package(url: "https://github.com/apparata/TemplateKit.git", .upToNextMajor(from: "0.4.8"))
+        .package(url: "https://github.com/yonaskolb/XcodeGen.git", .exact("2.25.0")),
+        .package(url: "https://github.com/apparata/Markin.git", .exact("0.6.7")),
+        .package(url: "https://github.com/apparata/TemplateKit.git", .exact("0.4.8"))
     ],
     targets: [
         .target(
