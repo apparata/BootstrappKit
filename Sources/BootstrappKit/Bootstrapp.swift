@@ -133,7 +133,7 @@ public class Bootstrapp {
             let condition = try ConditionParser().parse(conditionTokens)
             
             // Don't add entry to blacklist if inclusion condition is true.
-            if condition.evaluate(with: context) {
+            if try condition.evaluate(with: context) {
                 continue
             }
             
@@ -164,7 +164,7 @@ public class Bootstrapp {
             let condition = try ConditionParser().parse(conditionTokens)
             
             // Don't add entry to blacklist if inclusion condition is true.
-            if condition.evaluate(with: context) {
+            if try condition.evaluate(with: context) {
                 continue
             }
             

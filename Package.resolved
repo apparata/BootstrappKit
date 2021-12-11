@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/apparata/Markin.git",
         "state": {
           "branch": null,
-          "revision": "527d4cf190a6905ef3ccbe4fc91d7b2044f9a84a",
-          "version": "0.6.7"
+          "revision": "13bbf953356a36cbdd7e004b9ffe23f95fe9f3a9",
+          "version": "0.7.0"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/apparata/TemplateKit.git",
         "state": {
           "branch": null,
-          "revision": "07b50022c9ff5f9244f474ceafef8955ed7a73d6",
-          "version": "0.4.8"
+          "revision": "a550c7b20b4e62285cc3824e839b18434e4ec7d5",
+          "version": "0.5.0"
         }
       },
       {

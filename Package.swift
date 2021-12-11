@@ -12,17 +12,17 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/yonaskolb/XcodeGen.git", .exact("2.25.0")),
-        .package(url: "https://github.com/apparata/Markin.git", .exact("0.6.7")),
-        .package(url: "https://github.com/apparata/TemplateKit.git", .exact("0.4.8"))
+        .package(url: "https://github.com/apparata/Markin.git", .exact("0.7.0")),
+        .package(url: "https://github.com/apparata/TemplateKit.git", .exact("0.5.0"))
     ],
     targets: [
         .target(
             name: "BootstrappKit",
             dependencies: [
-                "XcodeGenKit",
-                "ProjectSpec",
-                "TemplateKit",
-                "Markin"
+                .product(name: "Markin", package: "Markin"),
+                .product(name: "TemplateKit", package: "TemplateKit"),
+                .product(name: "XcodeGenKit", package: "XcodeGen"),
+                .product(name: "ProjectSpec", package: "XcodeGen")
             ],
             swiftSettings: [
                 .define("DEBUG", .when(configuration: .debug)),
