@@ -40,7 +40,8 @@ internal class XcodeProjectGenerator {
         
         print("Generating project...")
         let projectGenerator = ProjectGenerator(project: project)
-        let xcodeProject: XcodeProj = try projectGenerator.generateXcodeProject()
+        let username = NSUserName()
+        let xcodeProject: XcodeProj = try projectGenerator.generateXcodeProject(userName: username)
         
         print("Writing project...")
         
