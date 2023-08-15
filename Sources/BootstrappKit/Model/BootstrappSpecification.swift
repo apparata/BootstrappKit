@@ -187,6 +187,7 @@ public struct BootstrappSpecification {
     public let parametrizableFiles: [Regex]
     public let includeDirectories: [IncludeDirectories]
     public let includeFiles: [IncludeFiles]
+    public let packages: [BootstrappPackage]
 }
 
 extension BootstrappSpecification.ProjectType: Hashable {
@@ -240,6 +241,7 @@ extension BootstrappSpecification: Codable {
         case parametrizableFiles
         case includeDirectories
         case includeFiles
+        case packages
     }
     
     public init(from decoder: Decoder) throws {
@@ -280,6 +282,7 @@ extension BootstrappSpecification: Codable {
         parametrizableFiles = patterns.map { Regex("^\($0)$") }
         includeDirectories = try container.decodeIfPresent([IncludeDirectories].self, forKey: .includeDirectories) ?? []
         includeFiles = try container.decodeIfPresent([IncludeFiles].self, forKey: .includeFiles) ?? []
+        packages = try container.decodeIfPresent([BootstrappPackage].self, forKey: .packages) ?? []
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -314,6 +317,7 @@ extension BootstrappSpecification: Codable {
         try container.encode(patterns, forKey: .parametrizableFiles)
         try container.encode(includeDirectories, forKey: .includeDirectories)
         try container.encode(includeFiles, forKey: .includeFiles)
+        try container.encode(packages, forKey: .packages)
     }
 }
 

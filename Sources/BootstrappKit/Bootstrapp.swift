@@ -12,12 +12,18 @@ public class Bootstrapp {
     public let template: BootstrappTemplate
     public var specification: BootstrappSpecification { template.specification }
     public let parameters: [BootstrappParameter]
+    public let packages: [BootstrappPackage]
     private var blacklistedDirectories: [Path] = []
     private var blacklistedFiles: [Path] = []
 
-    public init(template: BootstrappTemplate, parameters: [BootstrappParameter]) {
+    public init(
+        template: BootstrappTemplate,
+        parameters: [BootstrappParameter],
+        packages: [BootstrappPackage]
+    ) {
         self.template = template
         self.parameters = parameters
+        self.packages = packages
     }
     
     public func instantiateTemplate() throws -> Path {
@@ -25,6 +31,7 @@ public class Bootstrapp {
         var context = makeDefaultContext()
         context = applySubstitutions(specification.substitutions, to: context)
         context = applyParameters(parameters, to: context)
+        context = applyPackages(packages, to: context)
         
         let outputPath = try prepareOutputDirectory(accordingTo: specification, with: context)
         let contentPath = template.contentPath
@@ -103,6 +110,15 @@ public class Bootstrapp {
                 context[parameter.id] = value
             }
         }
+        return context
+    }
+    
+    private func applyPackages(
+        _ packages: [BootstrappPackage],
+        to inputContext: Context
+    ) -> Context {
+        var context = inputContext
+        context["packages"] = packages
         return context
     }
     
