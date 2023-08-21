@@ -127,7 +127,12 @@ public class Bootstrapp {
     private func prepareOutputDirectory(accordingTo specification: BootstrappSpecification,
                                       with context: Context) throws -> Path {
         let renderedDirectoryName = try Template(specification.outputDirectoryName).render(context: context)
-        let outputPath = Path.temporaryDirectory.appendingComponent(renderedDirectoryName)
+        let outputPath = Path.temporaryDirectory
+            .appendingComponent("Results")
+            .appendingComponent(formatDate(Date(), options: [.withYear, .withMonth, .withDay, .withDashSeparatorInDate]))
+            .appendingComponent(renderedDirectoryName)
+        
+        
         
         if outputPath.exists {
             try outputPath.remove()
