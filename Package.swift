@@ -1,19 +1,19 @@
-// swift-tools-version:5.8
+// swift-tools-version:5.9
 
 import PackageDescription
 
 let package = Package(
     name: "BootstrappKit",
     platforms: [
-        .macOS(.v12)
+        .macOS(.v13)
     ],
     products: [
         .library(name: "BootstrappKit", targets: ["BootstrappKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/yonaskolb/XcodeGen.git", exact: "2.36.1"),
+        .package(url: "https://github.com/yonaskolb/XcodeGen.git", exact: "2.38.0"),
         .package(url: "https://github.com/apparata/Markin.git", exact: "0.7.1"),
-        .package(url: "https://github.com/apparata/TemplateKit.git", exact: "0.5.0")
+        .package(url: "https://github.com/apparata/TemplateKit.git", exact: "0.6.0")
     ],
     targets: [
         .target(

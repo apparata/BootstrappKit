@@ -251,7 +251,7 @@ public class Bootstrapp {
             
             if shouldParametrizeFile(renderedFilePath, accordingTo: specification) {
                 let string = try String(contentsOf: sourcePath.url, encoding: .utf8)
-                let output = (try Template(string).render(context: context)).data(using: .utf8)
+                let output = (try Template(string).render(context: context, root: contentPath.url)).data(using: .utf8)
                 try output?.write(to: destinationPath.url)
             } else {
                 try sourcePath.copy(to: destinationPath)
