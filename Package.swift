@@ -11,7 +11,8 @@ let package = Package(
         .library(name: "BootstrappKit", targets: ["BootstrappKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/yonaskolb/XcodeGen.git", exact: "2.38.0"),
+        .package(url: "https://github.com/yonaskolb/XcodeGen.git", branch: "synced_folder"),
+        //.package(url: "https://github.com/yonaskolb/XcodeGen.git", exact: "2.38.0"),
         .package(url: "https://github.com/apparata/Markin.git", exact: "0.7.1"),
         .package(url: "https://github.com/apparata/TemplateKit.git", exact: "0.6.0")
     ],
