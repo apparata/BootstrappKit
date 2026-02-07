@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/yonaskolb/XcodeGen.git",
       "state" : {
-        "branch" : "synced_folder",
-        "revision" : "5519fb08dbaa99c1370d46873fc0e05932402daf"
+        "revision" : "21ac9944b0ab546a07422dbed86f33dd2ebd76f8",
+        "version" : "2.44.1"
       }
     },
     {
