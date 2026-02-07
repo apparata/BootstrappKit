@@ -9,16 +9,31 @@ import XcodeProj
 import PathKit
 import Version
 
+/// Generates an Xcode project (`.xcodeproj`) from a XcodeGen YAML specification.
+///
+/// Uses XcodeGen's `SpecLoader`, `ProjectGenerator`, and `FileWriter` to load,
+/// validate, generate, and write the project to disk.
 internal class XcodeProjectGenerator {
-    
+
+    /// Errors specific to Xcode project generation.
     enum Error: Swift.Error {
+        /// The XcodeGen YAML specification file was not found at the expected path.
         case specificationFileDoesNotExist
     }
-        
+
     init() {
         //
     }
-    
+
+    /// Generates an Xcode project from the given specification.
+    ///
+    /// - Parameters:
+    ///   - specificationPath: Path to the XcodeGen YAML specification file.
+    ///   - projectPath: The output directory for the generated project.
+    ///   - context: The rendering context, used to populate the file header template.
+    /// - Returns: The path to the generated `.xcodeproj` bundle.
+    /// - Throws: ``Error/specificationFileDoesNotExist`` if the spec file is missing,
+    ///   or any XcodeGen validation/generation error.
     func generate(specificationPath: Path, projectPath: Path, context: Context) throws -> Path {
         
         guard specificationPath.exists else {

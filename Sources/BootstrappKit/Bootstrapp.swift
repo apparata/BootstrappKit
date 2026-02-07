@@ -7,15 +7,34 @@ import TemplateKit
 
 internal typealias Context = [String: Any?]
 
+/// Orchestrator that drives the template instantiation pipeline.
+///
+/// Given a ``BootstrappTemplate``, a set of resolved ``BootstrappParameter`` values,
+/// and optional ``BootstrappPackage`` dependencies, `Bootstrapp` renders the template
+/// content into a fully realised project on disk.
 public class Bootstrapp {
-    
+
+    /// The loaded template bundle to instantiate.
     public let template: BootstrappTemplate
+
+    /// Convenience accessor for the template's specification.
     public var specification: BootstrappSpecification { template.specification }
+
+    /// The resolved parameters that will be injected into the template context.
     public let parameters: [BootstrappParameter]
+
+    /// Swift package dependencies to include in the generated project.
     public let packages: [BootstrappPackage]
+
     private var blacklistedDirectories: [Path] = []
     private var blacklistedFiles: [Path] = []
 
+    /// Creates a new template instantiator.
+    ///
+    /// - Parameters:
+    ///   - template: The template bundle to instantiate.
+    ///   - parameters: Resolved parameter values for template rendering.
+    ///   - packages: Swift package dependencies to include.
     public init(
         template: BootstrappTemplate,
         parameters: [BootstrappParameter],
@@ -25,7 +44,17 @@ public class Bootstrapp {
         self.parameters = parameters
         self.packages = packages
     }
-    
+
+    /// Runs the full template instantiation pipeline and returns the output path.
+    ///
+    /// The pipeline builds a rendering context, prepares the output directory,
+    /// evaluates conditional inclusion rules, renders directory and file names
+    /// (and content for parametrizable files), and optionally generates an
+    /// Xcode project via XcodeGen.
+    ///
+    /// - Returns: The path to the generated project. For `.xcodeProject` templates
+    ///   this is the `.xcodeproj` path; for all other types it is the output directory.
+    /// - Throws: Errors from template rendering, file I/O, or project generation.
     public func instantiateTemplate() throws -> Path {
         
         var context = makeDefaultContext()

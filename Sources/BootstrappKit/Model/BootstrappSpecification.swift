@@ -150,43 +150,88 @@ import Foundation
 
 ---------------------------------------------------------------------------- */
 
+/// The decoded representation of a `Bootstrapp.json` template specification.
+///
+/// A specification defines the project type, user-facing parameters, file
+/// inclusion rules, parametrizable file patterns, substitutions, and optional
+/// Swift package dependencies. It is the central configuration that drives
+/// the template instantiation pipeline in ``Bootstrapp``.
 public struct BootstrappSpecification {
 
+    /// Errors that can occur when decoding a specification.
     public enum Error: Swift.Error {
+        /// The `type` string in the JSON does not match any known project type.
         case unsupportedProjectType(String)
+        /// An `"Xcode Project"` type requires a `projectSpecification` field.
         case xcodeProjectRequiresProjectSpecification
     }
-    
+
+    /// The kind of project a template produces.
     public enum ProjectType {
+        /// A meta-template that generates general project templates.
         case generalMetaTemplate
+        /// A meta-template that generates Xcode project templates.
         case xcodeMetaTemplate
+        /// A meta-template that generates Swift package templates.
         case swiftMetaTemplate
+        /// A general-purpose project (no Xcode project or Swift package generation).
         case general
+        /// An Xcode project, with the associated XcodeGen YAML specification filename.
         case xcodeProject(specification: String)
+        /// A Swift package project.
         case swiftPackage
     }
-    
+
+    /// A conditional rule for including or excluding directories during instantiation.
     public struct IncludeDirectories {
+        /// A condition expression evaluated against the template context.
         public let condition: String
+        /// Directory paths to include when the condition is true.
         public let directories: [String]
     }
 
+    /// A conditional rule for including or excluding files during instantiation.
     public struct IncludeFiles {
+        /// A condition expression evaluated against the template context.
         public let condition: String
+        /// File paths to include when the condition is true.
         public let files: [String]
     }
-    
+
+    /// The unique identifier of the template (e.g. `"Library Swift Package"`).
     public let id: String
+
+    /// The version of the specification format itself.
     public let specificationVersion: VersionNumber
+
+    /// The version of this particular template.
     public let templateVersion: VersionNumber
+
+    /// The kind of project this template produces.
     public let type: ProjectType
+
+    /// A human-readable description of what the template does.
     public let description: String
+
+    /// A TemplateKit expression for the output directory name (e.g. `"<{ APP_NAME }>"`).
     public let outputDirectoryName: String
+
+    /// Static key-value pairs injected into the rendering context.
     public let substitutions: [String: String]
+
+    /// The user-facing parameters defined by this template.
     public let parameters: [BootstrappParameter]
+
+    /// Regex patterns that determine which files have their content rendered through TemplateKit.
     public let parametrizableFiles: [Regex]
+
+    /// Conditional directory inclusion rules.
     public let includeDirectories: [IncludeDirectories]
+
+    /// Conditional file inclusion rules.
     public let includeFiles: [IncludeFiles]
+
+    /// Swift package dependencies defined by the template.
     public let packages: [BootstrappPackage]
 }
 
@@ -207,6 +252,7 @@ extension BootstrappSpecification.ProjectType: Hashable {
 
 extension BootstrappSpecification.ProjectType: Comparable {
 
+    /// A display category used for grouping templates in the UI.
     public var category: String {
         switch self {
         case .generalMetaTemplate: return "Meta Templates"

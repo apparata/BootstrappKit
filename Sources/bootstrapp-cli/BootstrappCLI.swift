@@ -2,6 +2,12 @@ import ArgumentParser
 import BootstrappKit
 import Foundation
 
+/// Command-line interface for instantiating projects from Bootstrapp template bundles.
+///
+/// Usage:
+/// ```
+/// bootstrapp-cli <template-path> --param KEY=VALUE --verbose
+/// ```
 @main
 struct BootstrappCLI: ParsableCommand {
 
@@ -10,24 +16,32 @@ struct BootstrappCLI: ParsableCommand {
         abstract: "Instantiate a project from a Bootstrapp template bundle."
     )
 
+    /// Path to the template bundle directory containing `Bootstrapp.json`.
     @Argument(help: "Path to the template bundle directory.")
     var templatePath: String
 
+    /// Parameter overrides in `KEY=VALUE` format. Can be repeated.
     @Option(name: .long, parsing: .upToNextOption, help: "Parameter value in KEY=VALUE format. Repeatable.")
     var param: [String] = []
 
+    /// Additional Swift package dependencies in `NAME,URL,VERSION` format. Can be repeated.
     @Option(name: .long, parsing: .upToNextOption, help: "Swift package in NAME,URL,VERSION format. Repeatable.")
     var package: [String] = []
 
+    /// Names of spec-defined packages to exclude. Can be repeated.
     @Option(name: .long, parsing: .upToNextOption, help: "Exclude a spec-defined package by name. Repeatable.")
     var excludePackage: [String] = []
 
+    /// An optional override for the output directory path.
     @Option(name: .long, help: "Override the output directory.")
     var outputDir: String?
 
+    /// When set, prints detailed progress information during instantiation.
     @Flag(name: .long, help: "Print progress information.")
     var verbose: Bool = false
 
+    /// Loads the template, applies parameter and package overrides, and runs
+    /// the instantiation pipeline. Prints the output path on success.
     func run() throws {
         let bundleURL = URL(fileURLWithPath: (templatePath as NSString).expandingTildeInPath)
             .standardizedFileURL

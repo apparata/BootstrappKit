@@ -4,7 +4,9 @@
 
 import Foundation
 
+/// Errors thrown when parsing a ``VersionNumber`` from a string.
 public enum VersionNumberError: Error {
+    /// The string does not match the expected `\d+(\.\d+)+` format.
     case invalidVersionNumber
 }
 
@@ -26,16 +28,23 @@ public struct VersionNumber: Comparable, Codable {
     
     static let regex: Regex = "^\\d+(?:\\.(?:\\d+))+$"
     
+    /// The individual numeric components of the version (e.g. `[1, 2, 3]` for `"1.2.3"`).
     let parts: [Int]
-    
+
+    /// Creates a version number from variadic integer parts.
     public init(parts: Int...) {
         self.parts = parts
     }
-    
+
+    /// Creates a version number from an array of integer parts.
     public init(parts: [Int]) {
         self.parts = parts
     }
-    
+
+    /// Parses a version string in the format `"major.minor.patch"` (or more components).
+    ///
+    /// - Throws: ``VersionNumberError/invalidVersionNumber`` if the string doesn't
+    ///   match the expected `\d+(\.\d+)+` pattern.
     public init(_ versionString: String) throws {
         guard VersionNumber.regex.isMatch(versionString) else {
             throw VersionNumberError.invalidVersionNumber
@@ -48,6 +57,7 @@ public struct VersionNumber: Comparable, Codable {
 
 extension VersionNumber: CustomStringConvertible {
     
+    /// The dot-separated string representation of the version (e.g. `"1.2.3"`).
     public var string: String {
         return parts.map({ String($0) }).joined(separator: ".")
     }
@@ -67,6 +77,7 @@ extension VersionNumber: Hashable {
 
 // MARK: Comparable
 
+/// Compares two version numbers component by component, with fewer parts being "less than".
 public func <(lhs: VersionNumber, rhs: VersionNumber) -> Bool {
     for i in 0..<min(lhs.parts.count, rhs.parts.count) {
         if lhs.parts[i] == rhs.parts[i] {
@@ -82,6 +93,7 @@ public func <(lhs: VersionNumber, rhs: VersionNumber) -> Bool {
 
 // MARK: Equatable
 
+/// Two version numbers are equal when they have the same number of parts and all parts match.
 public func ==(lhs: VersionNumber, rhs: VersionNumber) -> Bool {
     if lhs.parts.count != rhs.parts.count {
         return false

@@ -285,6 +285,16 @@ extension String {
 
 // MARK: - Pattern matching
 
+/// Pattern-matching operator that allows `Regex` to be used in `switch` statements.
+///
+/// ```swift
+/// switch someString {
+/// case Regex("^hello"):
+///     print("Starts with hello")
+/// default:
+///     break
+/// }
+/// ```
 public func ~=(regex: Regex, input: String) -> Bool {
     return regex.isMatch(input)
 }

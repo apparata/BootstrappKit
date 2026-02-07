@@ -4,12 +4,27 @@
 
 import Foundation
 
+/// A Swift package dependency to include in a generated project.
 public struct BootstrappPackage: Identifiable {
+
+    /// The package name, also used as the unique identifier.
     public var id: String { name }
+
+    /// The display name of the package (e.g. `"Alamofire"`).
     public let name: String
+
+    /// The repository URL of the package.
     public let url: String
+
+    /// The minimum version requirement (e.g. `"5.6.0"`).
     public let version: String
-    
+
+    /// Creates a new package dependency.
+    ///
+    /// - Parameters:
+    ///   - name: The package name.
+    ///   - url: The repository URL.
+    ///   - version: The minimum version.
     public init(name: String, url: String, version: String) {
         self.name = name
         self.url = url
