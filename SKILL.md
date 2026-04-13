@@ -1,13 +1,14 @@
 ---
 name: bootstrapp
-description: Instantiate a project from a Bootstrapp template bundle
-user-invocable: true
+description: "Scaffold a new project from a Bootstrapp template bundle. Reads the template's Bootstrapp.json specification, interactively confirms every parameter (string, boolean, option) with the user, selects Swift packages, then runs bootstrapp-cli to generate the fully rendered project. Use when the user wants to create a new project from a template, scaffold an app, instantiate a starter, bootstrap a codebase, or generate boilerplate from a Bootstrapp bundle."
 allowed-tools: Bash, Read, AskUserQuestion
+metadata:
+  user-invocable: true
 ---
 
 # Bootstrapp Template Instantiation
 
-You are a skill that instantiates projects from Bootstrapp template bundles using the `bootstrapp-cli` tool.
+Scaffold new projects from Bootstrapp template bundles using `bootstrapp-cli`.
 
 ## Steps
 
@@ -15,24 +16,24 @@ You are a skill that instantiates projects from Bootstrapp template bundles usin
 
 2. **Read the template specification.** Read `Bootstrapp.json` from the template bundle directory to discover the parameters and packages.
 
-3. **Confirm every parameter value with the user.** This is CRITICAL: you MUST ask about ALL parameters, not just a few. Do NOT skip any parameter, even if it has a reasonable-looking default. Do NOT silently assume defaults for any parameter.
+3. **Confirm every parameter value with the user.** CRITICAL: ask about ALL parameters — do not skip any, even those with reasonable-looking defaults.
 
-   Ask the user to confirm or change values using `AskUserQuestion`. Since `AskUserQuestion` supports at most 4 questions per call, you MUST make **multiple sequential calls** to cover all parameters — batch them 4 at a time until every single parameter has been addressed.
+   Use `AskUserQuestion` to confirm or change values. Since it supports at most 4 questions per call, make **multiple sequential calls** (batched 4 at a time) until every parameter is addressed.
 
-   For each parameter question:
-   - For **Option** type: use the spec's options list as the `AskUserQuestion` options (up to 4; mark the default with "(default)").
-   - For **Bool** type: offer "true" and "false" as options, marking the default.
-   - For **String** type: show the default value and offer "Keep default" vs "Change" — if the user picks "Change" (or "Other"), use their custom input. Mention the validation regex if one exists.
+   Per parameter type:
+   - **Option**: use the spec's options list (up to 4; mark the default with "(default)")
+   - **Bool**: offer "true" and "false" as options, marking the default
+   - **String**: show the default value and offer "Keep default" vs "Change" — if the user picks "Change", use their custom input. Mention the validation regex if one exists.
 
-   If a parameter has `dependsOn`, note which parameter it depends on.
+   Note any `dependsOn` relationships between parameters.
 
-   Do NOT proceed to step 4 until you have confirmed values for EVERY parameter.
+   Do NOT proceed to step 4 until every parameter is confirmed.
 
-4. **Package selection.** If the spec defines packages (the `packages` array in `Bootstrapp.json`), show the user the list of spec-defined packages (name, URL, version) and ask which ones, if any, they want to **exclude**. Use `AskUserQuestion` with multi-select. Any packages the user wants to exclude will be passed via `--exclude-package NAME` flags. IMPORTANT: First ask if the user wishes to include all of the packages, and if the user answers "yes", don't ask the user about what packages to exclude.
+4. **Package selection.** If the spec defines a `packages` array, first ask whether the user wants to include all packages. If yes, skip exclusion. Otherwise, show the list (name, URL, version) and ask which to exclude via `AskUserQuestion`. Excluded packages are passed as `--exclude-package NAME` flags.
 
 5. **Build and execute the CLI command.** Construct:
    ```bash
-   swift run --package-path /Users/martinjohannesson/Projekt/git/Frameworks/BootstrappKit bootstrapp-cli \
+   swift run --package-path <path-to-BootstrappKit> bootstrapp-cli \
      "<template-path>" \
      --param KEY1=VALUE1 \
      --param KEY2=VALUE2 \
@@ -40,17 +41,23 @@ You are a skill that instantiates projects from Bootstrapp template bundles usin
      --verbose
    ```
 
-   For string values with spaces, quote the entire `KEY=VALUE` like: `--param "COPYRIGHT_HOLDER=Apparata AB"`
+   Replace `<path-to-BootstrappKit>` with the actual path to the BootstrappKit package on the local machine.
 
-   For Option parameters, pass the option name (e.g. `--param LICENSE_TYPE=MIT`).
-
-   For Bool parameters, pass `true` or `false` (e.g. `--param GIT_INIT=false`).
+   Quoting rules:
+   - String values with spaces: `--param "COPYRIGHT_HOLDER=Apparata AB"`
+   - Option parameters: pass the option name, e.g. `--param LICENSE_TYPE=MIT`
+   - Bool parameters: pass `true` or `false`, e.g. `--param GIT_INIT=false`
 
 6. **Report the result.** The CLI prints the output path as the last line. Tell the user where the generated project is located.
 
+7. **Handle errors.** If the CLI fails:
+   - Verify the template path exists and contains `Bootstrapp.json`
+   - Check Swift build output for dependency resolution or compilation errors (the first build may be slow)
+   - Validate that string parameter values match any regex constraints from the spec
+   - Report the error clearly and suggest corrective action
+
 ## Notes
 
-- The first build may take a while as Swift resolves and compiles dependencies.
 - Template files use `<{ }>` delimiters for variable substitution, conditionals, and loops.
-- The output goes to `/tmp/Results/YYYY-MM-DD/<project-name>/` by default.
-- Import paths in templates (e.g. `<{ import "../../Common/Licenses/MIT.txt" }>`) resolve relative to the template's Content directory, so the surrounding directory structure matters.
+- Output defaults to `/tmp/Results/YYYY-MM-DD/<project-name>/`.
+- Import paths in templates resolve relative to the template's Content directory.
